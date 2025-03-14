@@ -4,12 +4,7 @@ import java.util.List;
 
 public class SJN {
     public static void sjnOperation() {
-        List<int[]> arrOfArrivalBurstEnterSequence = new ArrayList<>();
-        for (int i = 0; i < Main.countOfElement; i++) {
-            arrOfArrivalBurstEnterSequence.add(new int[]{Main.arrivalTimes[i], Main.burstTimes[i], i + 1});
-        }
-
-        List<int[]> sortedListForArrival = arrOfArrivalBurstEnterSequence.stream().
+        List<int[]> sortedListForArrival = Main.arrivalAndBurstTimesAndEnterSequence.stream().
                 sorted(Comparator.comparing(arr -> arr[0])).toList();
 
         List<Integer> orders = new ArrayList<>(Main.countOfElement);
@@ -28,5 +23,4 @@ public class SJN {
 
         Utilities.printTableAndAverages(times,orders,sortedListForArrival);
     }
-
 }

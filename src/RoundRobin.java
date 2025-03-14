@@ -8,15 +8,10 @@ public class RoundRobin {
     public static void rrOperation() {
         int timeQuantum = Utilities.takeTimeQuantum();
 
-        List<int[]> listOfArrivalBurstEnterSequence = new ArrayList<>();
-        for (int i = 0; i < Main.countOfElement; i++) {
-            listOfArrivalBurstEnterSequence.add(new int[]{Main.arrivalTimes[i], Main.burstTimes[i], i + 1});
-        }
-
         List<Integer> orders = new ArrayList<>();
         List<Integer> times = new ArrayList<>();
 
-        List<int[]> sortedListForArrival = listOfArrivalBurstEnterSequence.stream().
+        List<int[]> sortedListForArrival = Main.arrivalAndBurstTimesAndEnterSequence.stream().
                 sorted(Comparator.comparing(arr -> arr[0])).toList();
         List<Integer> copyOfBurstTimes = sortedListForArrival.stream().map(arr -> arr[1]).collect(Collectors.toList());
 

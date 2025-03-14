@@ -32,12 +32,11 @@ public class PriorityScheduling {
     private static void setRequiredElements(){
         priorities = Utilities.takePriorities();
         listOfArrivalBurstPriorityEnterSequence = new ArrayList<>();
+        var list = Main.arrivalAndBurstTimesAndEnterSequence;
 
         for (int i = 0; i < Main.countOfElement; i++) {
             listOfArrivalBurstPriorityEnterSequence.
-                    add(new int[]{
-                            Main.arrivalTimes[i], Main.burstTimes[i], priorities.get(i), i + 1
-                    });
+                    add(new int[]{list.get(i)[0], list.get(i)[1], list.get(i)[2], i + 1});
         }
 
         sortedListForArrival = listOfArrivalBurstPriorityEnterSequence.stream().

@@ -1,11 +1,11 @@
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 
 public class Main {
     public static int countOfElement;
 
-    public static int[] arrivalTimes;
-
-    public static int[] burstTimes;
+    public static List<int[]> arrivalAndBurstTimesAndEnterSequence = new ArrayList<>();
 
     public static void main(String[] args) {
         try {
