@@ -60,7 +60,7 @@ public class Utilities {
             while (arrivalTime < 0) {
                 System.out.print("Please enter number equals or grater than  0 :");
                 System.out.print("Enter the arrival time of P" + (i + 1) + " :");
-                arrivalTime =  sr.nextInt();
+                arrivalTime = sr.nextInt();
             }
 
             System.out.print("Enter the burst time of P" + (i + 1) + " :");
@@ -72,7 +72,7 @@ public class Utilities {
                 burstTime = sr.nextInt();
             }
 
-            Main.arrivalAndBurstTimesAndEnterSequence.add(new int[]{arrivalTime,burstTime,(i+1)});
+            Main.arrivalAndBurstTimesAndEnterSequence.add(new int[]{arrivalTime, burstTime, (i + 1)});
         }
     }
 

@@ -26,22 +26,23 @@ public class PriorityScheduling {
             times.add(times.getLast() + listSortedByPriority.getFirst()[1]);
         }
 
-        Utilities.printTableAndAverages(times,orders,sortedListForArrival);
+        Utilities.printTableAndAverages(times, orders, sortedListForArrival);
     }
 
-    private static void setRequiredElements(){
+    private static void setRequiredElements() {
         priorities = Utilities.takePriorities();
         listOfArrivalBurstPriorityEnterSequence = new ArrayList<>();
         var list = Main.arrivalAndBurstTimesAndEnterSequence;
 
         for (int i = 0; i < Main.countOfElement; i++) {
             listOfArrivalBurstPriorityEnterSequence.
-                    add(new int[]{list.get(i)[0], list.get(i)[1], list.get(i)[2], i + 1});
+                    add(new int[]{list.get(i)[0], list.get(i)[1], priorities.get(i), i + 1});
         }
 
         sortedListForArrival = listOfArrivalBurstPriorityEnterSequence.stream().
+                sorted(Comparator.comparing(arr -> arr[2])).
                 sorted(Comparator.comparing(arr -> arr[0])).toList();
-        times = new ArrayList<>(Main.countOfElement+1);
+        times = new ArrayList<>(Main.countOfElement + 1);
         orders = new ArrayList<>(Main.countOfElement);
         times.add(sortedListForArrival.getFirst()[0]);
     }
