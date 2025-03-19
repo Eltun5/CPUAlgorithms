@@ -3,24 +3,26 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SJN {
-    public static void sjnOperation() {
-        List<int[]> sortedListForArrival = Main.arrivalAndBurstTimesAndEnterSequence.stream().
+    public static void sjnAlgorithm() {
+        List<int[]> listSortedByArrival = Main.listOfArrivalBurstTimesAndEnterSequence.stream().
                 sorted(Comparator.comparing(arr -> arr[0])).toList();
 
-        List<Integer> orders = new ArrayList<>(Main.countOfElement);
-        List<Integer> times = new ArrayList<>(Main.countOfElement + 1);
-        times.add(sortedListForArrival.getFirst()[0]);
+        List<Integer> orders = new ArrayList<>(Main.countOfProcess);
+        List<Integer> times = new ArrayList<>(Main.countOfProcess + 1);
+
+        times.add(listSortedByArrival.getFirst()[0]);
 
         System.out.println();
-        for (int i = 0; i < Main.countOfElement; i++) {
+
+        for (int i = 0; i < Main.countOfProcess; i++) {
             int currentTime = times.getLast();
-            List<int[]> list = sortedListForArrival.stream().
+            int[] nextProcess = listSortedByArrival.stream().
                     filter(arr -> arr[0] <= currentTime && !orders.contains(arr[2])).
-                    sorted(Comparator.comparing(arr -> arr[1])).toList();
-            orders.add(list.getFirst()[2]);
-            times.add(times.getLast() + list.getFirst()[1]);
+                    sorted(Comparator.comparing(arr -> arr[1])).toList().getFirst();
+            orders.add(nextProcess[2]);
+            times.add(times.getLast() + nextProcess[1]);
         }
 
-        Utilities.printTableAndAverages(times,orders,sortedListForArrival);
+        Utilities.printGanttChartTableAndAverages(times, orders, listSortedByArrival);
     }
 }

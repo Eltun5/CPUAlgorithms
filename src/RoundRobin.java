@@ -5,28 +5,32 @@ import java.util.stream.Collectors;
 
 public class RoundRobin {
 
-    public static void rrOperation() {
+    public static void roundRobinAlgorithm() {
         int timeQuantum = Utilities.takeTimeQuantum();
 
         List<Integer> orders = new ArrayList<>();
         List<Integer> times = new ArrayList<>();
 
-        List<int[]> sortedListForArrival = Main.arrivalAndBurstTimesAndEnterSequence.stream().
+        List<int[]> listSortedByArrival = Main.listOfArrivalBurstTimesAndEnterSequence.stream().
                 sorted(Comparator.comparing(arr -> arr[0])).toList();
-        List<Integer> copyOfBurstTimes = sortedListForArrival.stream().map(arr -> arr[1]).collect(Collectors.toList());
 
-        times.add(sortedListForArrival.getFirst()[0]);
+        List<Integer> listOfTimeWitchNeedToFinish = listSortedByArrival.stream().map(arr -> arr[1]).collect(Collectors.toList());
 
-        while (!copyOfBurstTimes.stream().filter(i -> i != 0).toList().isEmpty()) {
-            for (int i = 0; i < Main.countOfElement; i++) {
-                if (copyOfBurstTimes.get(i) > 0 && times.getLast() >= sortedListForArrival.get(i)[0]) {
-                    orders.add(sortedListForArrival.get(i)[2]);
-                    if (copyOfBurstTimes.get(i) >= timeQuantum) {
+        times.add(listSortedByArrival.getFirst()[0]);
+
+        while (!listOfTimeWitchNeedToFinish.stream().filter(i -> i != 0).toList().isEmpty()) {
+            for (int i = 0; i < Main.countOfProcess; i++) {
+                if (listOfTimeWitchNeedToFinish.get(i) > 0 &&
+                    times.getLast() >= listSortedByArrival.get(i)[0]) {
+                    orders.add(listSortedByArrival.get(i)[2]);
+
+                    if (listOfTimeWitchNeedToFinish.get(i) >= timeQuantum) {
                         times.add(times.getLast() + timeQuantum);
-                        copyOfBurstTimes.set(i, copyOfBurstTimes.get(i) - timeQuantum);
+                        listOfTimeWitchNeedToFinish.set(i,
+                                listOfTimeWitchNeedToFinish.get(i) - timeQuantum);
                     } else {
-                        times.add(times.getLast() + copyOfBurstTimes.get(i));
-                        copyOfBurstTimes.set(i, 0);
+                        times.add(times.getLast() + listOfTimeWitchNeedToFinish.get(i));
+                        listOfTimeWitchNeedToFinish.set(i, 0);
                     }
                 }
             }
@@ -37,9 +41,9 @@ public class RoundRobin {
         float sumOfTurnaroundTime = 0;
 
         Utilities.printHeaderOfTable();
-        for (int i = 0; i < Main.countOfElement; i++) {
-            int order = sortedListForArrival.get(i)[2];
-            int[] currentArr = sortedListForArrival.stream().
+        for (int i = 0; i < Main.countOfProcess; i++) {
+            int order = listSortedByArrival.get(i)[2];
+            int[] currentArr = listSortedByArrival.stream().
                     filter(arr -> order == arr[2]).toList().getFirst();
             int lastIndexOfOrder = orders.lastIndexOf(order);
             int indexOfOrder = orders.indexOf(order);
@@ -59,8 +63,8 @@ public class RoundRobin {
             );
         }
 
-        System.out.println("Average Waiting time is : " + (sumOfWaitingTime / Main.countOfElement));
-        System.out.println("Average Turnaround time is : " + (sumOfTurnaroundTime / Main.countOfElement));
+        System.out.println("Average Waiting time is : " + (sumOfWaitingTime / Main.countOfProcess));
+        System.out.println("Average Turnaround time is : " + (sumOfTurnaroundTime / Main.countOfProcess));
 
     }
 }

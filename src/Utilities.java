@@ -5,74 +5,70 @@ import java.util.Scanner;
 public class Utilities {
     public static Scanner sr = new Scanner(System.in);
 
-    public static final String strategies = """
+    public static final String algorithms = """
             First-Come, First-Served (1)
             Shortest Job Next (Non-Preemptive) (2)
             Round Robin (3)
             Priority Scheduling (Non-Preemptive) (4)
             Enter int:""";
 
-    public static final String enterCount = "Please enter how many processes there will be:";
+    public static final String enterCountOfProcesses = "Please enter how many processes there will be:";
 
-    public static final String wrongNum = "Please enter correct integer!!!";
+    public static final String wrongNumMassage = "Please enter correct integer!!!";
 
-    public static final String wrongInput = "Please enter correct integer!!!";
+    public static final String wrongInputMassage = "Please enter correct integer!!!";
 
     public static final String headerOfTable = """
             Process | Arrival Time | Burst Time | Waiting Time | Turnaround Time
             ------- | ------------ | ---------- | ------------ | ---------------""";
 
 
-    public static void printStrategies() {
-        System.out.print(strategies);
+    public static void printAlgorithmTypes() {
+        System.out.print(algorithms);
     }
 
-    public static void printEnterCount() {
-        System.out.print(enterCount);
+    public static void printMassageWitchEnterCount() {
+        System.out.print(enterCountOfProcesses);
     }
 
-    public static void printWrongNum() {
-        System.out.print(wrongNum);
+    public static void printMassageWhichEnteredWrongNum() {
+        System.out.print(wrongNumMassage);
     }
 
     public static void printWrongInput() {
-        System.out.print(wrongInput);
+        System.out.print(wrongInputMassage);
     }
 
     public static void printHeaderOfTable() {
         System.out.println(headerOfTable);
     }
 
-    public static void takeElements() {
-        printEnterCount();
-        Main.countOfElement = sr.nextInt();
+    public static void takeProcesses() {
+        printMassageWitchEnterCount();
+        Main.countOfProcess = sr.nextInt();
 
-        while (Main.countOfElement <= 0) {
-            System.out.print("Please enter number grater than 0 :");
-            printEnterCount();
-            Main.countOfElement = sr.nextInt();
+        Main.countOfProcess = accurateGraterThanZero(Main.countOfProcess, enterCountOfProcesses );
+
+        while (Main.countOfProcess <= 0) {
+            System.out.print("Please enter number equals or grater than 0 :");
+            printMassageWitchEnterCount();
+            Main.countOfProcess = sr.nextInt();
         }
 
-        for (int i = 0; i < Main.countOfElement; i++) {
-            System.out.print("Enter the arrival time of P" + (i + 1) + " :");
+        for (int i = 0; i < Main.countOfProcess; i++) {
+            String arrivalMassage="Enter the arrival time of P" + (i + 1) + " :";
+            System.out.print(arrivalMassage);
             int arrivalTime = sr.nextInt();
 
-            while (arrivalTime < 0) {
-                System.out.print("Please enter number equals or grater than  0 :");
-                System.out.print("Enter the arrival time of P" + (i + 1) + " :");
-                arrivalTime = sr.nextInt();
-            }
+            arrivalTime = accurateGraterThanZero(arrivalTime, arrivalMassage);
 
-            System.out.print("Enter the burst time of P" + (i + 1) + " :");
+            String burstMassage="Enter the burst time of P" + (i + 1) + " :";
+            System.out.print(burstMassage);
             int burstTime = sr.nextInt();
 
-            while (burstTime < 0) {
-                System.out.print("Please enter number equals or grater than 0 :");
-                System.out.print("Enter the burst time of P" + (i + 1) + " :");
-                burstTime = sr.nextInt();
-            }
+            burstTime = accurateGraterThanZero(burstTime, burstMassage);
 
-            Main.arrivalAndBurstTimesAndEnterSequence.add(new int[]{arrivalTime, burstTime, (i + 1)});
+            Main.listOfArrivalBurstTimesAndEnterSequence.add(new int[]{arrivalTime, burstTime, (i + 1)});
         }
     }
 
@@ -81,21 +77,21 @@ public class Utilities {
         if (sr.nextInt() == 0) System.exit(0);
     }
 
-    public static void askWantTryAgainWithSameElements() {
+    public static void askWantTryAgainWithSameProcesses() {
         System.out.print("Do you want to try again with same processes (yes is 1, no is 0):");
-        if (sr.nextInt() == 0) Utilities.takeElements();
+        if (sr.nextInt() == 0) Utilities.takeProcesses();
     }
 
-    public static void chooseOperationTypeAndOutputType() {
-        printStrategies();
+    public static void chooseAlgorithmType() {
+        printAlgorithmTypes();
         int operation = sr.nextInt();
 
         switch (operation) {
-            case 1 -> FCFS.fcfsOperation();
-            case 2 -> SJN.sjnOperation();
-            case 3 -> RoundRobin.rrOperation();
+            case 1 -> FCFS.fcfsAlgorithm();
+            case 2 -> SJN.sjnAlgorithm();
+            case 3 -> RoundRobin.roundRobinAlgorithm();
             case 4 -> PriorityScheduling.prioritySchedulingNonPreemptiveOperation();
-            default -> printWrongNum();
+            default -> printMassageWhichEnteredWrongNum();
         }
     }
 
@@ -110,30 +106,27 @@ public class Utilities {
     }
 
     public static List<Integer> takePriorities() {
-        List<Integer> priorities = new ArrayList<>(Main.countOfElement);
-        for (int i = 0; i < Main.countOfElement; i++) {
-            System.out.print("Please enter priority of P" + (i + 1) + " : ");
+        List<Integer> priorities = new ArrayList<>(Main.countOfProcess);
+        for (int i = 0; i < Main.countOfProcess; i++) {
+            String massage = "Please enter priority of P" + (i + 1) + " : ";
+            System.out.print(massage);
             int input = sr.nextInt();
-            while (input < 0) {
-                System.out.println("Please enter number grater than 0.");
-                System.out.print("Please enter priority of P" + (i + 1) + " : ");
-                input = sr.nextInt();
-            }
+            input = accurateGraterThanZero(input, massage);
             priorities.add(input);
         }
         return priorities;
     }
 
-    public static void printTableAndAverages(List<Integer> times, List<Integer> orders, List<int[]> sortedListForArrival) {
+    public static void printGanttChartTableAndAverages(List<Integer> times, List<Integer> orders, List<int[]> listSortedByArrival) {
         Utilities.printGanttChart(times, orders);
 
         float sumOfWaitingTime = 0;
         float sumOfTurnaroundTime = 0;
 
         Utilities.printHeaderOfTable();
-        for (int i = 0; i < Main.countOfElement; i++) {
+        for (int i = 0; i < Main.countOfProcess; i++) {
             int order = orders.get(i);
-            int[] currentArr = sortedListForArrival.stream().
+            int[] currentArr = listSortedByArrival.stream().
                     filter(arr -> order == arr[arr.length - 1]).toList().getFirst();
             int arrivalTime = currentArr[0];
             int waitingTime = times.get(i) - arrivalTime;
@@ -147,8 +140,8 @@ public class Utilities {
             );
         }
 
-        System.out.println("Average Waiting time is : " + (sumOfWaitingTime / Main.countOfElement));
-        System.out.println("Average Turnaround time is : " + (sumOfTurnaroundTime / Main.countOfElement));
+        System.out.println("Average Waiting time is : " + (sumOfWaitingTime / Main.countOfProcess));
+        System.out.println("Average Turnaround time is : " + (sumOfTurnaroundTime / Main.countOfProcess));
     }
 
     public static void printGanttChart(List<Integer> times, List<Integer> orders) {
@@ -167,4 +160,12 @@ public class Utilities {
         System.out.println();
     }
 
+    public static int accurateGraterThanZero(int value, String massage) {
+        while (value < 0) {
+            System.out.println("Please enter number grater than 0.");
+            System.out.print(massage);
+            value = sr.nextInt();
+        }
+        return value;
+    }
 }

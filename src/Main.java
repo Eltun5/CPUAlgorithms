@@ -3,9 +3,9 @@ import java.util.InputMismatchException;
 import java.util.List;
 
 public class Main {
-    public static int countOfElement;
+    public static int countOfProcess;
 
-    public static List<int[]> arrivalAndBurstTimesAndEnterSequence = new ArrayList<>();
+    public static List<int[]> listOfArrivalBurstTimesAndEnterSequence = new ArrayList<>();
 
     public static void main(String[] args) {
         System.out.println("Please dont enter process which has empty time between 2 process.\n" +
@@ -14,11 +14,11 @@ public class Main {
                            "P2 (arrival time is 5, burst time is 1) \n" +
                            "This time the algorithm will not work as expected!!!\n");
         try {
-            Utilities.takeElements();
+            Utilities.takeProcesses();
             while (true) {
-                Utilities.chooseOperationTypeAndOutputType();
+                Utilities.chooseAlgorithmType();
                 Utilities.askWantTryAgain();
-                Utilities.askWantTryAgainWithSameElements();
+                Utilities.askWantTryAgainWithSameProcesses();
             }
         } catch (InputMismatchException e) {
             Utilities.printWrongInput();
