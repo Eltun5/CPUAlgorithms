@@ -1,9 +1,14 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
 public class Utilities {
     public static Scanner sr = new Scanner(System.in);
+
+    public static int countOfProcess;
+
+    public static List<Process> listOfProcess = new ArrayList<>();
 
     public static final String algorithms = """
             First-Come, First-Served (1)
@@ -22,6 +27,11 @@ public class Utilities {
             Process | Arrival Time | Burst Time | Waiting Time | Turnaround Time
             ------- | ------------ | ---------- | ------------ | ---------------""";
 
+    public static Comparator<Process> compareByArrival = Comparator.comparing(Process::arrivalTime);
+
+    public static Comparator<Process> compareByPriority = Comparator.comparing(Process::priority);
+
+    public static Comparator<Process> compareByBurst = Comparator.comparing(Process::burstTime);
 
     public static void printAlgorithmTypes() {
         System.out.print(algorithms);
@@ -45,30 +55,30 @@ public class Utilities {
 
     public static void takeProcesses() {
         printMassageWitchEnterCount();
-        Main.countOfProcess = sr.nextInt();
+        countOfProcess = sr.nextInt();
 
-        Main.countOfProcess = accurateGraterThanZero(Main.countOfProcess, enterCountOfProcesses );
-
-        while (Main.countOfProcess <= 0) {
+        while (countOfProcess <= 0) {
             System.out.print("Please enter number equals or grater than 0 :");
             printMassageWitchEnterCount();
-            Main.countOfProcess = sr.nextInt();
+            countOfProcess = sr.nextInt();
         }
 
-        for (int i = 0; i < Main.countOfProcess; i++) {
-            String arrivalMassage="Enter the arrival time of P" + (i + 1) + " :";
+        for (int i = 0; i < countOfProcess; i++) {
+            String arrivalMassage = "Enter the arrival time of P" + (i + 1) + " :";
             System.out.print(arrivalMassage);
             int arrivalTime = sr.nextInt();
 
             arrivalTime = accurateGraterThanZero(arrivalTime, arrivalMassage);
 
-            String burstMassage="Enter the burst time of P" + (i + 1) + " :";
+            String burstMassage = "Enter the burst time of P" + (i + 1) + " :";
             System.out.print(burstMassage);
             int burstTime = sr.nextInt();
 
             burstTime = accurateGraterThanZero(burstTime, burstMassage);
 
-            Main.listOfArrivalBurstTimesAndEnterSequence.add(new int[]{arrivalTime, burstTime, (i + 1)});
+            Process process = new Process(i + 1, arrivalTime, burstTime);
+
+            listOfProcess.add(process);
         }
     }
 
@@ -105,49 +115,51 @@ public class Utilities {
         return timeQuantum;
     }
 
-    public static List<Integer> takePriorities() {
-        List<Integer> priorities = new ArrayList<>(Main.countOfProcess);
-        for (int i = 0; i < Main.countOfProcess; i++) {
-            String massage = "Please enter priority of P" + (i + 1) + " : ";
+    public static void takePriorities() {
+        for (int i = 0; i < countOfProcess; i++) {
+            Process currentProcess = listOfProcess.get(i);
+            String massage = "Please enter priority of P" + currentProcess.processNumber() + " : ";
             System.out.print(massage);
-            int input = sr.nextInt();
-            input = accurateGraterThanZero(input, massage);
-            priorities.add(input);
+            int priority = sr.nextInt();
+            priority = accurateGraterThanZero(priority, massage);
+            currentProcess.setPriority(priority);
         }
-        return priorities;
     }
 
-    public static void printGanttChartTableAndAverages(List<Integer> times, List<Integer> orders, List<int[]> listSortedByArrival) {
-        Utilities.printGanttChart(times, orders);
+    public static void printGanttChartTableAndAverages(List<Integer> times,
+                                                       List<Integer> listOfProcessSequence,
+                                                       List<Process> listOfProcessSortedByArrival) {
+        Utilities.printGanttChart(times, listOfProcessSequence);
 
         float sumOfWaitingTime = 0;
         float sumOfTurnaroundTime = 0;
 
         Utilities.printHeaderOfTable();
-        for (int i = 0; i < Main.countOfProcess; i++) {
-            int order = orders.get(i);
-            int[] currentArr = listSortedByArrival.stream().
-                    filter(arr -> order == arr[arr.length - 1]).toList().getFirst();
-            int arrivalTime = currentArr[0];
+        for (int i = 0; i < countOfProcess; i++) {
+            int processSequence = listOfProcessSequence.get(i);
+            Process currentProcess = listOfProcessSortedByArrival.stream().
+                    filter(process -> processSequence == process.processNumber()).toList().getFirst();
+            int arrivalTime = currentProcess.arrivalTime();
             int waitingTime = times.get(i) - arrivalTime;
             int turnaroundTime = times.get(i + 1) - arrivalTime;
+
             sumOfWaitingTime += waitingTime;
             sumOfTurnaroundTime += turnaroundTime;
             System.out.printf("""
                             P%s      | %s            | %s          | %s            | %s
                             """
-                    , order, currentArr[0], currentArr[1], waitingTime, turnaroundTime
+                    , processSequence, arrivalTime, currentProcess.burstTime(), waitingTime, turnaroundTime
             );
         }
 
-        System.out.println("Average Waiting time is : " + (sumOfWaitingTime / Main.countOfProcess));
-        System.out.println("Average Turnaround time is : " + (sumOfTurnaroundTime / Main.countOfProcess));
+        System.out.println("Average Waiting time is : " + (sumOfWaitingTime / countOfProcess));
+        System.out.println("Average Turnaround time is : " + (sumOfTurnaroundTime / countOfProcess));
     }
 
-    public static void printGanttChart(List<Integer> times, List<Integer> orders) {
+    public static void printGanttChart(List<Integer> times, List<Integer> listOfProcessSequence) {
         System.out.print("|");
 
-        for (int i : orders) {
+        for (int i : listOfProcessSequence) {
             System.out.print(" P" + (i) + " |");
         }
 
@@ -168,4 +180,6 @@ public class Utilities {
         }
         return value;
     }
+
+
 }

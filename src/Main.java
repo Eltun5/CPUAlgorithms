@@ -1,12 +1,6 @@
-import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.List;
 
 public class Main {
-    public static int countOfProcess;
-
-    public static List<int[]> listOfArrivalBurstTimesAndEnterSequence = new ArrayList<>();
-
     public static void main(String[] args) {
         System.out.println("Please dont enter process which has empty time between 2 process.\n" +
                            "For example: We enter 2 process\n" +

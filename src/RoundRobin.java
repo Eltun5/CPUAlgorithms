@@ -1,70 +1,76 @@
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RoundRobin {
 
     public static void roundRobinAlgorithm() {
         int timeQuantum = Utilities.takeTimeQuantum();
 
-        List<Integer> orders = new ArrayList<>();
+        List<Integer> listOfProcessSequence = new ArrayList<>();
         List<Integer> times = new ArrayList<>();
 
-        List<int[]> listSortedByArrival = Main.listOfArrivalBurstTimesAndEnterSequence.stream().
-                sorted(Comparator.comparing(arr -> arr[0])).toList();
+        List<Process> listOfProcessSortedByArrival = new ArrayList<>();
 
-        List<Integer> listOfTimeWitchNeedToFinish = listSortedByArrival.stream().map(arr -> arr[1]).collect(Collectors.toList());
+        Collections.copy(Utilities.listOfProcess, listOfProcessSortedByArrival);
 
-        times.add(listSortedByArrival.getFirst()[0]);
+        listOfProcessSortedByArrival.sort(Utilities.compareByArrival);
 
-        while (!listOfTimeWitchNeedToFinish.stream().filter(i -> i != 0).toList().isEmpty()) {
-            for (int i = 0; i < Main.countOfProcess; i++) {
-                if (listOfTimeWitchNeedToFinish.get(i) > 0 &&
-                    times.getLast() >= listSortedByArrival.get(i)[0]) {
-                    orders.add(listSortedByArrival.get(i)[2]);
+        times.add(listOfProcessSortedByArrival.getFirst().arrivalTime());
 
-                    if (listOfTimeWitchNeedToFinish.get(i) >= timeQuantum) {
+        while (!getListOfProcessTimeNeededToFinish(listOfProcessSortedByArrival).stream().
+                filter(i -> i != 0).toList().isEmpty()) {
+            for (int i = 0; i < Utilities.countOfProcess; i++) {
+                if (listOfProcessSortedByArrival.get(i).timeNeededToFinish() > 0 &&
+                    times.getLast() >= listOfProcessSortedByArrival.get(i).arrivalTime()) {
+
+                    listOfProcessSequence.add(listOfProcessSortedByArrival.get(i).processNumber());
+
+                    if (listOfProcessSortedByArrival.get(i).timeNeededToFinish() >= timeQuantum) {
                         times.add(times.getLast() + timeQuantum);
-                        listOfTimeWitchNeedToFinish.set(i,
-                                listOfTimeWitchNeedToFinish.get(i) - timeQuantum);
                     } else {
-                        times.add(times.getLast() + listOfTimeWitchNeedToFinish.get(i));
-                        listOfTimeWitchNeedToFinish.set(i, 0);
+                        times.add(times.getLast() + listOfProcessSortedByArrival.get(i).timeNeededToFinish());
                     }
+                    listOfProcessSortedByArrival.get(i).
+                            decreaseTimeNeededToFinish(timeQuantum);
                 }
             }
         }
-        Utilities.printGanttChart(times, orders);
+        Utilities.printGanttChart(times, listOfProcessSequence);
 
         float sumOfWaitingTime = 0;
         float sumOfTurnaroundTime = 0;
 
         Utilities.printHeaderOfTable();
-        for (int i = 0; i < Main.countOfProcess; i++) {
-            int order = listSortedByArrival.get(i)[2];
-            int[] currentArr = listSortedByArrival.stream().
-                    filter(arr -> order == arr[2]).toList().getFirst();
-            int lastIndexOfOrder = orders.lastIndexOf(order);
-            int indexOfOrder = orders.indexOf(order);
-            int waitingTime = times.get(indexOfOrder)-currentArr[0];
+        for (int i = 0; i < Utilities.countOfProcess; i++) {
+            int processSequence = listOfProcessSortedByArrival.get(i).processNumber();
+            Process currentProcess = listOfProcessSortedByArrival.stream().
+                    filter(process -> processSequence == process.processNumber()).toList().getFirst();
+            int lastIndexOfOrder = listOfProcessSequence.lastIndexOf(processSequence);
+            int indexOfOrder = listOfProcessSequence.indexOf(processSequence);
+            int waitingTime = times.get(indexOfOrder) - currentProcess.arrivalTime();
             for (int j = indexOfOrder + 1; j < lastIndexOfOrder; j++) {
-                if (orders.get(j) != order) {
+                if (listOfProcessSequence.get(j) != processSequence) {
                     waitingTime += (times.get(j) - times.get(j - 1));
                 }
             }
-            int turnaroundTime = times.get(lastIndexOfOrder+1)- currentArr[0];
+            int turnaroundTime = times.get(lastIndexOfOrder + 1) - currentProcess.arrivalTime();
             sumOfWaitingTime += waitingTime;
             sumOfTurnaroundTime += turnaroundTime;
             System.out.printf("""
                             P%s      | %s            | %s          | %s            | %s
                             """
-                    , order, currentArr[0], currentArr[1], waitingTime, turnaroundTime
+                    , processSequence, currentProcess.arrivalTime(), currentProcess.burstTime(),
+                    waitingTime, turnaroundTime
             );
         }
 
-        System.out.println("Average Waiting time is : " + (sumOfWaitingTime / Main.countOfProcess));
-        System.out.println("Average Turnaround time is : " + (sumOfTurnaroundTime / Main.countOfProcess));
+        System.out.println("Average Waiting time is : " + (sumOfWaitingTime / Utilities.countOfProcess));
+        System.out.println("Average Turnaround time is : " + (sumOfTurnaroundTime / Utilities.countOfProcess));
 
+    }
+
+    private static List<Integer> getListOfProcessTimeNeededToFinish(List<Process> listOfProcess) {
+        return listOfProcess.stream().map(Process::timeNeededToFinish).toList();
     }
 }

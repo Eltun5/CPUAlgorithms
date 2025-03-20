@@ -1,21 +1,27 @@
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 
 public class FCFS {
     public static void fcfsAlgorithm() {
-        List<int[]> listSortedByArrival = Main.listOfArrivalBurstTimesAndEnterSequence.stream().
-                sorted(Comparator.comparing(arr -> arr[0])).toList();
+        List<Process> listOfProcessSortedByArrival = new ArrayList<>();
 
-        List<Integer> times = new ArrayList<>(Main.countOfProcess + 1);
-        times.add(listSortedByArrival.getFirst()[0]);
+        Collections.copy(Utilities.listOfProcess, listOfProcessSortedByArrival);
 
-        for (int[] arr : listSortedByArrival) {
-            times.add(times.getLast() + arr[1]);
+        listOfProcessSortedByArrival.sort(Utilities.compareByArrival);
+
+        List<Integer> times = new ArrayList<>(Utilities.countOfProcess + 1);
+        times.add(listOfProcessSortedByArrival.getFirst().arrivalTime());
+
+        for (Process process : listOfProcessSortedByArrival) {
+            times.add(times.getLast() + process.burstTime());
         }
 
-        List<Integer> orders = listSortedByArrival.stream().map(arr -> arr[2]).toList();
+        List<Integer> listOfProcessSequence = listOfProcessSortedByArrival.stream().
+                map(Process::arrivalTime).toList();
 
-        Utilities.printGanttChartTableAndAverages(times,orders,listSortedByArrival);
+        Utilities.printGanttChartTableAndAverages(times,
+                listOfProcessSequence,
+                listOfProcessSortedByArrival);
     }
 }
