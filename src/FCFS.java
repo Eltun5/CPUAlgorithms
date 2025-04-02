@@ -1,12 +1,13 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class FCFS {
     public static void fcfsAlgorithm() {
         List<Process> listOfProcessSortedByArrival = new ArrayList<>();
 
-        Collections.copy(Utilities.listOfProcess, listOfProcessSortedByArrival);
+        for (Process p : Utilities.listOfProcess) {
+            listOfProcessSortedByArrival.add(new Process(p.processNumber(), p.arrivalTime(), p.burstTime()));
+        }
 
         listOfProcessSortedByArrival.sort(Utilities.compareByArrival);
 
@@ -18,7 +19,7 @@ public class FCFS {
         }
 
         List<Integer> listOfProcessSequence = listOfProcessSortedByArrival.stream().
-                map(Process::arrivalTime).toList();
+                map(Process::processNumber).toList();
 
         Utilities.printGanttChartTableAndAverages(times,
                 listOfProcessSequence,

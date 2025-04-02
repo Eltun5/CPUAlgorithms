@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class RoundRobin {
@@ -12,14 +11,18 @@ public class RoundRobin {
 
         List<Process> listOfProcessSortedByArrival = new ArrayList<>();
 
-        Collections.copy(Utilities.listOfProcess, listOfProcessSortedByArrival);
+        for (Process p : Utilities.listOfProcess) {
+            listOfProcessSortedByArrival.add(new Process(p.processNumber(), p.arrivalTime(), p.burstTime()));
+        }
 
         listOfProcessSortedByArrival.sort(Utilities.compareByArrival);
 
         times.add(listOfProcessSortedByArrival.getFirst().arrivalTime());
 
-        while (!getListOfProcessTimeNeededToFinish(listOfProcessSortedByArrival).stream().
+        while (!listOfProcessSortedByArrival.stream().
+                map(Process::timeNeededToFinish).
                 filter(i -> i != 0).toList().isEmpty()) {
+
             for (int i = 0; i < Utilities.countOfProcess; i++) {
                 if (listOfProcessSortedByArrival.get(i).timeNeededToFinish() > 0 &&
                     times.getLast() >= listOfProcessSortedByArrival.get(i).arrivalTime()) {
@@ -44,8 +47,8 @@ public class RoundRobin {
         Utilities.printHeaderOfTable();
         for (int i = 0; i < Utilities.countOfProcess; i++) {
             int processSequence = listOfProcessSortedByArrival.get(i).processNumber();
-            Process currentProcess = listOfProcessSortedByArrival.stream().
-                    filter(process -> processSequence == process.processNumber()).toList().getFirst();
+            Process currentProcess = listOfProcessSortedByArrival.get(i);
+
             int lastIndexOfOrder = listOfProcessSequence.lastIndexOf(processSequence);
             int indexOfOrder = listOfProcessSequence.indexOf(processSequence);
             int waitingTime = times.get(indexOfOrder) - currentProcess.arrivalTime();
@@ -68,9 +71,5 @@ public class RoundRobin {
         System.out.println("Average Waiting time is : " + (sumOfWaitingTime / Utilities.countOfProcess));
         System.out.println("Average Turnaround time is : " + (sumOfTurnaroundTime / Utilities.countOfProcess));
 
-    }
-
-    private static List<Integer> getListOfProcessTimeNeededToFinish(List<Process> listOfProcess) {
-        return listOfProcess.stream().map(Process::timeNeededToFinish).toList();
     }
 }

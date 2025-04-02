@@ -1,12 +1,13 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class SJN {
     public static void sjnAlgorithm() {
         List<Process> listOfProcessSortedByArrival = new ArrayList<>();
 
-        Collections.copy(Utilities.listOfProcess, listOfProcessSortedByArrival);
+        for (Process p : Utilities.listOfProcess) {
+            listOfProcessSortedByArrival.add(new Process(p.processNumber(), p.arrivalTime(), p.burstTime()));
+        }
 
         listOfProcessSortedByArrival.sort(Utilities.compareByArrival);
 

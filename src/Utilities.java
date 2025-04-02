@@ -15,6 +15,7 @@ public class Utilities {
             Shortest Job Next (Non-Preemptive) (2)
             Round Robin (3)
             Priority Scheduling (Non-Preemptive) (4)
+            Priority Scheduling (Preemptive) (5)
             Enter int:""";
 
     public static final String enterCountOfProcesses = "Please enter how many processes there will be:";
@@ -101,6 +102,7 @@ public class Utilities {
             case 2 -> SJN.sjnAlgorithm();
             case 3 -> RoundRobin.roundRobinAlgorithm();
             case 4 -> PriorityScheduling.prioritySchedulingNonPreemptiveOperation();
+            case 5 -> PriorityScheduling.prioritySchedulingPreemptiveOperation();
             default -> printMassageWhichEnteredWrongNum();
         }
     }

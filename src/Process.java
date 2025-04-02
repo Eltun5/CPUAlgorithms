@@ -33,8 +33,7 @@ public class Process {
     }
 
     public void setPriority(int priority) {
-        this.priority = Math.max(timeNeededToFinish, 1);
-        ;
+        this.priority = Math.max(priority, 1);
     }
 
     public int timeNeededToFinish() {
